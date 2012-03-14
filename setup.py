@@ -1,14 +1,16 @@
+#!/usr/bin/python
 
 from setuptools import setup, find_packages
+
 setup(
     name = "daemonize",
-    version = "1.0",
+    version = "1.1",
     packages = ['daemonize'],
-    author = "Jerry Seutter",
-    author_email = "yello@thegeeks.net",
-    maintainer = "Jerry Seutter",
-    url = "http://daemonize.sourceforge.net",
-    description = "Library to enable your code run as a daemon process on Unix-like systems.",
+    author = "Ilya A. Otyutskiy",
+    author_email = "sharp@thesharp.ru",
+    maintainer = "Ilya A. Otyutskiy",
+    url = "https://github.com/thesharp/daemonize",
+    description = "Library to enable your code run as a daemon process "
+                  "on Unix-like systems.",
     license = "PSF"
 )
-
