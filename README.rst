@@ -11,8 +11,7 @@ You can install it from Python Package Index (PyPI) using ``$ pip install daemon
 
 Usage
 -----
-```python
-import time
+``import time
 
 import daemonize
 
@@ -22,4 +21,4 @@ def main():
         print "This is it!  I will die in five seconds."
         time.sleep(5)
 
-daemonize.start(main, pid, debug=True)```
+daemonize.start(main, pid, debug=True)``
