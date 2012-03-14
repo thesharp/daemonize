@@ -1,0 +1,13 @@
+Still to do:
+setup.pyize it.
+- python setup.py bdist_egg
+- See http://peak.telecommunity.com/DevCenter/setuptools for more info.
+
+Provide a super-easy, sensible way to do logging.
+Consider using launchpad.net for hosting.
+
+# Possible options are:
+# 1. Close/don't close file descriptors.  Default to redirecting.
+# 2. Use/don't use lockfile.
+# 3. Use/don't use logging.  Default to logging.
+

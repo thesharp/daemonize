@@ -1,0 +1,48 @@
+<html>
+<body>
+	<h1>Welcome to Python's Daemonizer!</h1>
+(In no way associated with Python, except that this is written in Python)
+
+<p>
+	Whew, now that that's out of the way, let's get down to business.  You're here because you're looking for documentation on how to write a daemon in Python.  Stop!  Look no further!  Turn a blind eye!  Just use this library to do the dumb, idiotic, yet necessary things to make a stable daemon for your Python program!
+	</p>
+	
+	<p>
+		The basic idea is that write your program so that it can be started by calling one function, say main().  Then you would do the following:
+		</p>
+<pre>
+import daemonize
+
+def the_other_main_that_calls_the_main_function(sys.argv):
+    # Parse command line options, all that jazz...
+
+    # Time to start your daemon!
+    daemonize.start(main)
+
+    # Wow, that was hard... Time to do... uh... umm... exit?
+    # Ahh, I know, get beer from fridge!  Yeah, that's it!
+</pre>
+
+<p>
+You might think that this would be easy to do on your own, and you'd be correct.  It's easy.  But dumb.  I see daemons written incorrectly all the time, because it's a dumb set of things that you shouldn't have to worry about.  Do yourself a favor and use this library instead.  
+</p>
+<p>Still looking for documentation?  My, you're a pesky one, aren't you?  Well, <a href="http://daemonize.sourceforge.net/daemonize.txt">here is how to write a daemon</a>.
+<h2>But wait, I want to start more than one daemon!</h2>
+<p>
+Oooo, now you're a smarty pants aren't you? :)  Well, call daemonize.start() again if you have to.  And again.  And again.  Have you ever tried to see how many daemons your system can run before they start getting killed by the OS? :)  (Hint:  Your system gets *really* slow!)
+</p>
+<p>
+Above all, have fun, and may all your daemons be stable!
+</p>
+<p>
+	Jerry out.
+	</p>
+	
+<h2>Downloads</h2>
+<a href="https://sourceforge.net/project/showfiles.php?group_id=207053">Download</a>.
+<h2>Bugs?  Questions?  Comments?</h2>
+<p>Bored with no more plants left to water?  Drop us an <a href="https://sourceforge.net/mail/?group_id=207053">email on the mailing list</a>, or <a href="https://sourceforge.net/forum/?group_id=207053">post a message on the forum</a>.</p>
+
+<a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=207053&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+</body>
+</html>
