@@ -48,10 +48,10 @@ def start(fun_to_start, pid, debug=False):
             descriptor = null_descriptor
 
     # Set umask to default to safe file permissions when running
-    # as a root daemon. 027 is an octal number.
+    # as a root daemon.  027 is an octal number.
     os.umask(027)
 
-    # Change to a known directory.  If this isn"t done, starting
+    # Change to a known directory.  If this isn't done, starting
     # a daemon in a subdirectory that needs to be deleted results
     # in "directory busy" errors.
     # On some systems, running with chdir("/") is not allowed,
@@ -69,11 +69,5 @@ def start(fun_to_start, pid, debug=False):
     # practice for daemons.
     lockfile.write("%s" % (os.getpid()))
     lockfile.flush()
-
-    # Logging.  Current thoughts are:
-    # 1. Attempt to use the Python logger (this won"t work Python < 2.3)
-    # 2. Offer the ability to log to syslog
-    # 3. If logging fails, log stdout & stderr to a file
-    # 4. If logging to file fails, log stdout & stderr to stdout.
 
     fun_to_start()
