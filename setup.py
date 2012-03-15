@@ -4,8 +4,8 @@ from setuptools import setup, find_packages
 
 setup(
     name = "daemonize",
-    version = "1.1",
-    packages = ['daemonize'],
+    version = "1.2",
+    py_modules = ['daemonize'],
     author = "Ilya A. Otyutskiy",
     author_email = "sharp@thesharp.ru",
     maintainer = "Ilya A. Otyutskiy",

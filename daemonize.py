@@ -2,19 +2,24 @@
 # Copyright 2007 Jerry Seutter yello (*a*t*) thegeeks.net
 # Copyright 2012 Ilya A. Otyutskiy <sharp@thesharp.ru>
 
+from functools import partial
+
 import fcntl
 import os
 import sys
 import time
+import signal
+import resource
+import logging
 
 
-def start(fun_to_start, pid, debug=False):
-    logger = None
-    std_pipes_to_logger = True
-    # Used docs by Levent Karakas
-    # http://www.enderunix.org/documents/eng/daemon.php
-    # as a reference for this section.
+def sigterm(pid, signum, frame):
+    logging.info("Caught signal %d. Stopping daemon." % signum)
+    os.remove(pid)
+    sys.exit(0)
 
+
+def start(fun_to_start, pid, logfile=None, debug=False):
     # Fork, creating a new process for the child.
     process_id = os.fork()
     if process_id < 0:
@@ -41,11 +46,17 @@ def start(fun_to_start, pid, debug=False):
         # Python has set os.devnull on this system, use it instead
         # as it might be different than /dev/null.
         devnull = os.devnull
+
     null_descriptor = open(devnull, "rw")
-    if not debug:
-        for descriptor in (sys.stdin, sys.stdout, sys.stderr):
-            descriptor.close()
-            descriptor = null_descriptor
+    for fd in range(resource.getrlimit(resource.RLIMIT_NOFILE)[0]):
+        try:
+            os.close(fd)
+        except OSError:
+            pass
+
+    os.open(devnull, os.O_RDWR)
+    os.dup(0)
+    os.dup(0)
 
     # Set umask to default to safe file permissions when running
     # as a root daemon.  027 is an octal number.
@@ -69,5 +80,18 @@ def start(fun_to_start, pid, debug=False):
     # practice for daemons.
     lockfile.write("%s" % (os.getpid()))
     lockfile.flush()
+
+    # Set custom action on SIGTERM.
+    signal.signal(signal.SIGTERM, partial(sigterm, pid))
+
+    # Initializing logger.
+    if debug:
+        loglevel = logging.DEBUG
+    else:
+        loglevel = logging.INFO
+    logging.basicConfig(format="%(asctime)s %(levelname)s %(message)s", \
+                        datefmt="%b %d %H:%M:%S", level=loglevel, \
+                        filename=logfile)
+    logging.info("Starting daemon.")
 
     fun_to_start()
