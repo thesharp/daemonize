@@ -84,11 +84,16 @@ def start(fun_to_start, pid, logfile=None, debug=False):
     # Set custom action on SIGTERM.
     signal.signal(signal.SIGTERM, partial(sigterm, pid))
 
-    # Initializing logger.
+    # Choose log level.
     if debug:
         loglevel = logging.DEBUG
     else:
         loglevel = logging.INFO
+    # Create log directory if not exists.
+    logdir = "/".join(logfile.split("/")[:-1])
+    if not os.path.exists(logdir):
+        os.makedirs(logdir)
+    # Initialize logger.
     logging.basicConfig(format="%(asctime)s %(levelname)s %(message)s", \
                         datefmt="%b %d %H:%M:%S", level=loglevel, \
                         filename=logfile)
