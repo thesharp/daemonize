@@ -23,12 +23,14 @@ class CounterTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(self.logfile))
 
     def test_counter_logfile_length(self):
-        with open(self.logfile, "r") as log:
-            self.assertEqual(len(log.readlines()), 7)
+        log = open(self.logfile, "r")
+        self.assertEqual(len(log.readlines()), 7)
+        log.close()
 
     def test_counter_logfile_last_line(self):
-        with open(self.logfile, "r") as log:
-            self.assertEqual(log.readlines()[6].split()[4], "4")
+        log = open(self.logfile, "r")
+        self.assertEqual(log.readlines()[6].split()[4], "4")
+        log.close()
 
 
 class DaemonizeTest(unittest.TestCase):
@@ -51,8 +53,9 @@ class DaemonizeTest(unittest.TestCase):
                                 % self.pidfile, shell=True,
                                 stdout=subprocess.PIPE)
         ps_pid = proc.communicate()[0]
-        with open(self.pidfile, "r") as pid:
-            pid = pid.read()
+        pidfile = open(self.pidfile, "r")
+        pid = pidfile.read()
+        pidfile.close()
         self.assertEqual("%s\n" % pid, ps_pid)
 
     def test_pidfile_presense(self):
