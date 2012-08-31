@@ -18,6 +18,7 @@ You can install it from Python Package Index (PyPI):
     pid = "/tmp/test.pid"
     logfile = "/tmp/test.log"
 
+
     def main():
         while True:
             daemonize.logging.debug("Doing some pointless job.")
