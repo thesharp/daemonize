@@ -7,7 +7,6 @@ from functools import partial
 import fcntl
 import os
 import sys
-import time
 import signal
 import resource
 import logging
@@ -47,7 +46,6 @@ def start(fun_to_start, pid, logfile=None, debug=False):
         # as it might be different than /dev/null.
         devnull = os.devnull
 
-    null_descriptor = open(devnull, "rw")
     for fd in range(resource.getrlimit(resource.RLIMIT_NOFILE)[0]):
         try:
             os.close(fd)
