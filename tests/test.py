@@ -10,7 +10,7 @@ class CounterTest(unittest.TestCase):
         self.pidfile = "/tmp/test.pid"
         if os.path.isfile(self.logfile):
             os.remove(self.logfile)
-        os.system("python daemon_counter.py")
+        os.system("python tests/daemon_counter.py")
         sleep(.1)
 
     def tearDown(self):
@@ -37,7 +37,7 @@ class DaemonizeTest(unittest.TestCase):
         self.pidfile = "/tmp/test.pid"
         if os.path.isfile(self.logfile):
             os.remove(self.logfile)
-        os.system("python daemon_sigterm.py")
+        os.system("python tests/daemon_sigterm.py")
         sleep(.1)
 
     def tearDown(self):
@@ -65,7 +65,7 @@ class SIGTERMTest(unittest.TestCase):
         self.pidfile = "/tmp/test.pid"
         if os.path.isfile(self.logfile):
             os.remove(self.logfile)
-        os.system("python daemon_sigterm.py")
+        os.system("python tests/daemon_sigterm.py")
         sleep(.1)
 
     def test_sigterm(self):

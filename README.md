@@ -3,6 +3,8 @@
 ## Description
 **daemonize** is a library for writing system daemons in Python. It was forked from [daemonize.sourceforge.net](http://daemonize.sourceforge.net). It is distributed under PSF license.
 
+[![Build Status](https://secure.travis-ci.org/thesharp/daemonize.png)](http://travis-ci.org/thesharp/daemonize)
+
 ## Installation
 You can install it from Python Package Index (PyPI):
 
