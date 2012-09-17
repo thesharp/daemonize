@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="daemonize",
-    version="1.3",
+    version="2.0",
     py_modules=["daemonize"],
     author="Ilya A. Otyutskiy",
     author_email="sharp@thesharp.ru",
@@ -12,5 +12,5 @@ setup(
     url="https://github.com/thesharp/daemonize",
     description="Library to enable your code run as a daemon process "
                 "on Unix-like systems.",
-    license="PSF"
+    license="MIT"
 )
