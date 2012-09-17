@@ -10,15 +10,32 @@ import sys
 import signal
 import resource
 import logging
+from logging import handlers
+
+
+# Initialize logging
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+logger.propagate = False
+if sys.platform == "darwin":
+    syslog_address = "/var/run/syslog"
+else:
+    syslog_address = "/dev/log"
+syslog = handlers.SysLogHandler(syslog_address)
+syslog.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s %(name)s: %(message)s",
+                              "%b %e %H:%M:%S")
+syslog.setFormatter(formatter)
+logger.addHandler(syslog)
 
 
 def sigterm(pid, signum, frame):
-    logging.info("Caught signal %d. Stopping daemon." % signum)
+    logger.warn("Caught signal %d. Stopping daemon." % signum)
     os.remove(pid)
     sys.exit(0)
 
 
-def start(fun_to_start, pid, logfile=None, debug=False):
+def start(fun_to_start, pid, debug=False):
     # Fork, creating a new process for the child.
     process_id = os.fork()
     if process_id < 0:
@@ -82,19 +99,6 @@ def start(fun_to_start, pid, logfile=None, debug=False):
     # Set custom action on SIGTERM.
     signal.signal(signal.SIGTERM, partial(sigterm, pid))
 
-    # Choose log level.
-    if debug:
-        loglevel = logging.DEBUG
-    else:
-        loglevel = logging.INFO
-    # Create log directory if not exists.
-    logdir = "/".join(logfile.split("/")[:-1])
-    if not os.path.exists(logdir):
-        os.makedirs(logdir)
-    # Initialize logger.
-    logging.basicConfig(format="%(asctime)s %(levelname)s %(message)s", \
-                        datefmt="%b %d %H:%M:%S", level=loglevel, \
-                        filename=logfile)
-    logging.info("Starting daemon.")
+    logger.warn("Starting daemon.")
 
     fun_to_start()
