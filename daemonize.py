@@ -13,10 +13,10 @@ from logging import handlers
 class Daemonize(object):
     """ Daemonize object
     Object constructor expects three arguments:
-    - app: contains the application name which will be sent to syslog
-    - pid: path to the pidfile
+    - app: contains the application name which will be sent to syslog.
+    - pid: path to the pidfile.
     - action: your custom function which will be executed after daemonization.
-    - keep_fds: optional list of fds which should remain open
+    - keep_fds: optional list of fds which should not be closed.
     """
     def __init__(self, app, pid, action, keep_fds=None):
         self.app = app
@@ -24,6 +24,8 @@ class Daemonize(object):
         self.action = action
         if keep_fds:
             self.keep_fds = keep_fds
+        else:
+            self.keep_fds = []
         # Initialize logging.
         self.logger = logging.getLogger(self.app)
         self.logger.setLevel(logging.DEBUG)

@@ -29,5 +29,23 @@ class DaemonizeTest(unittest.TestCase):
         sleep(10)
         self.assertTrue(os.path.isfile(self.pidfile))
 
+
+class KeepFDsTest(unittest.TestCase):
+    def setUp(self):
+        self.pidfile = "/tmp/test.pid"
+        self.logfile = "/tmp/test.log"
+        os.system("python tests/daemon_keep_fds.py")
+        sleep(.1)
+
+    def tearDown(self):
+        os.system("kill `cat %s`" % self.pidfile)
+        os.remove(self.logfile)
+        os.remove(self.pidfile)
+        sleep(.1)
+
+    def test_keep_fds(self):
+        log = open(self.logfile, "r").read()
+        self.assertEqual(log, "Test\n")
+
 if __name__ == '__main__':
     unittest.main()
