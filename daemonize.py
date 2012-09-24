@@ -16,11 +16,14 @@ class Daemonize(object):
     - app: contains the application name which will be sent to syslog
     - pid: path to the pidfile
     - action: your custom function which will be executed after daemonization.
+    - keep_fds: optional list of fds which should remain open
     """
-    def __init__(self, app, pid, action):
+    def __init__(self, app, pid, action, keep_fds=None):
         self.app = app
         self.pid = pid
         self.action = action
+        if keep_fds:
+            self.keep_fds = keep_fds
         # Initialize logging.
         self.logger = logging.getLogger(self.app)
         self.logger.setLevel(logging.DEBUG)
@@ -72,7 +75,8 @@ class Daemonize(object):
             # Uh oh, there was a problem.
             sys.exit(1)
 
-        # Close file descriptors
+        # Close all file descriptors, except the ones mentioned in
+        # self.keep_fds.
         devnull = "/dev/null"
         if hasattr(os, "devnull"):
             # Python has set os.devnull on this system, use it instead
@@ -80,10 +84,11 @@ class Daemonize(object):
             devnull = os.devnull
 
         for fd in range(resource.getrlimit(resource.RLIMIT_NOFILE)[0]):
-            try:
-                os.close(fd)
-            except OSError:
-                pass
+            if fd not in self.keep_fds:
+                try:
+                    os.close(fd)
+                except OSError:
+                    pass
 
         os.open(devnull, os.O_RDWR)
         os.dup(0)

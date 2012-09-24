@@ -23,3 +23,6 @@ You can install it from Python Package Index (PyPI):
 
     daemon = Daemonize(app="test_app", pid=pid, action=main)
     daemon.start()
+
+## File descriptors
+Daemonize object's constructor understands the optional argument **keep_fds** which can contain a list of fds which should remain open. TODO: explain it more.
