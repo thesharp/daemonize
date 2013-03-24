@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
+from sys import argv
 from time import sleep
+
 from daemonize import Daemonize
 
-pid = "/tmp/test.pid"
+pid = argv[1]
 
 
 def main():
