@@ -37,7 +37,7 @@ class KeepFDsTest(unittest.TestCase):
         self.pidfile = mkstemp()[1]
         self.logfile = mkstemp()[1]
         os.system("python tests/daemon_keep_fds.py %s %s" % (self.pidfile, self.logfile))
-        sleep(.1)
+        sleep(1)
 
     def tearDown(self):
         os.system("kill `cat %s`" % self.pidfile)
