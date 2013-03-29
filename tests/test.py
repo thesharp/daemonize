@@ -1,13 +1,15 @@
 import unittest
 import os
 import subprocess
+
+from tempfile import mkstemp
 from time import sleep
 
 
 class DaemonizeTest(unittest.TestCase):
     def setUp(self):
-        self.pidfile = "/tmp/test.pid"
-        os.system("python tests/daemon_sigterm.py")
+        self.pidfile = mkstemp()[1]
+        os.system("python tests/daemon_sigterm.py %s" % self.pidfile)
         sleep(.1)
 
     def tearDown(self):
@@ -31,10 +33,10 @@ class DaemonizeTest(unittest.TestCase):
 
 class KeepFDsTest(unittest.TestCase):
     def setUp(self):
-        self.pidfile = "/tmp/test.pid"
-        self.logfile = "/tmp/test.log"
-        os.system("python tests/daemon_keep_fds.py")
-        sleep(.1)
+        self.pidfile = mkstemp()[1]
+        self.logfile = mkstemp()[1]
+        os.system("python tests/daemon_keep_fds.py %s %s" % (self.pidfile, self.logfile))
+        sleep(1)
 
     def tearDown(self):
         os.system("kill `cat %s`" % self.pidfile)
