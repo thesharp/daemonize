@@ -6,7 +6,6 @@
 ## Dependencies
 It is tested under following Python versions:
 
-- 2.5
 - 2.6
 - 2.7
 - 3.3
