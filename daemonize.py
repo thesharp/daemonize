@@ -97,8 +97,9 @@ class Daemonize(object):
         os.dup(0)
 
         # Set umask to default to safe file permissions when running
-        # as a root daemon.  027 is an octal number.
-        os.umask(027)
+        # as a root daemon.  027 is an octal number which we are
+        # typing as 0o27 for Python3 compatibility.
+        os.umask(0o27)
 
         # Change to a known directory.  If this isn't done, starting
         # a daemon in a subdirectory that needs to be deleted results

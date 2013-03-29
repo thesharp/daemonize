@@ -16,10 +16,9 @@ class DaemonizeTest(unittest.TestCase):
 
     def test_is_working(self):
         sleep(10)
-        proc = subprocess.Popen("ps ax | awk '{print $1}' | grep `cat %s`" \
-                                % self.pidfile, shell=True,
-                                stdout=subprocess.PIPE)
-        ps_pid = proc.communicate()[0]
+        proc = subprocess.Popen("ps ax | awk '{print $1}' | grep `cat %s`" % self.pidfile,
+                                shell=True, stdout=subprocess.PIPE)
+        ps_pid = proc.communicate()[0].decode()
         pidfile = open(self.pidfile, "r")
         pid = pidfile.read()
         pidfile.close()

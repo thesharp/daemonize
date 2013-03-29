@@ -1,9 +1,16 @@
-# daemonize
+# daemonize [![Build Status](https://secure.travis-ci.org/thesharp/daemonize.png)](http://travis-ci.org/thesharp/daemonize)
 
 ## Description
 **daemonize** is a library for writing system daemons in Python. It has some bits from [daemonize.sourceforge.net](http://daemonize.sourceforge.net). It is distributed under MIT license.
 
-[![Build Status](https://secure.travis-ci.org/thesharp/daemonize.png)](http://travis-ci.org/thesharp/daemonize)
+## Dependencies
+It is tested under following Python versions:
+
+- 2.5
+- 2.6
+- 2.7
+- 3.3
+
 
 ## Installation
 You can install it from Python Package Index (PyPI):
