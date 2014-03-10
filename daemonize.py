@@ -31,19 +31,6 @@ class Daemonize(object):
         self.logger.setLevel(logging.DEBUG)
         # Display log messages only on defined handlers.
         self.logger.propagate = False
-        # It will work on OS X and Linux. No FreeBSD support, guys, I don't want to import re here
-        # to parse your peculiar platform string.
-        if sys.platform == "darwin":
-            syslog_address = "/var/run/syslog"
-        else:
-            syslog_address = "/dev/log"
-        syslog = handlers.SysLogHandler(syslog_address)
-        syslog.setLevel(logging.INFO)
-        # Try to mimic to normal syslog messages.
-        formatter = logging.Formatter("%(asctime)s %(name)s: %(message)s",
-                                      "%b %e %H:%M:%S")
-        syslog.setFormatter(formatter)
-        self.logger.addHandler(syslog)
 
     def sigterm(self, signum, frame):
         """ sigterm method
@@ -102,6 +89,22 @@ class Daemonize(object):
         os.dup(0)
         os.dup(0)
 
+        # Initialize syslog.
+        # It will work on OS X and Linux. No FreeBSD support, guys, I don't want to import re here
+        # to parse your peculiar platform string.
+        if sys.platform == "darwin":
+            syslog_address = "/var/run/syslog"
+        else:
+            syslog_address = "/dev/log"
+        syslog = handlers.SysLogHandler(syslog_address)
+        syslog.setLevel(logging.INFO)
+        # Try to mimic to normal syslog messages.
+        formatter = logging.Formatter("%(asctime)s %(name)s: %(message)s",
+                                      "%b %e %H:%M:%S")
+        syslog.setFormatter(formatter)
+
+        self.logger.addHandler(syslog)
+
         # Set umask to default to safe file permissions when running as a root daemon. 027 is an
         # octal number which we are typing as 0o27 for Python3 compatibility.
         os.umask(0o27)
@@ -110,15 +113,23 @@ class Daemonize(object):
         # needs to be deleted results in "directory busy" errors.
         os.chdir("/")
 
-        # Create a lockfile so that only one instance of this daemon is running at any time.
-        lockfile = open(self.pid, "w")
-        # Try to get an exclusive lock on the file. This will fail if another process has the file
-        # locked.
-        fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
-
-        # Record the process id to the lockfile. This is standard practice for daemons.
-        lockfile.write("%s" % (os.getpid()))
-        lockfile.flush()
+        try:
+            # Create a lockfile so that only one instance of this daemon is running at any time.
+            lockfile = open(self.pid, "w")
+        except IOError, ex:
+            self.logger.error("Unable to create a pidfile.")
+            sys.exit(1)
+        try:
+            # Try to get an exclusive lock on the file. This will fail if another process has the file
+            # locked.
+            fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            # Record the process id to the lockfile. This is standard practice for daemons.
+            lockfile.write("%s" % (os.getpid()))
+            lockfile.flush()
+        except IOError:
+            self.logger.error("Unable to lock on the pidfile.")
+            os.remove(self.pid)
+            sys.exit(1)
 
         # Set custom action on SIGTERM.
         signal.signal(signal.SIGTERM, self.sigterm)
