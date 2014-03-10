@@ -41,7 +41,6 @@ class KeepFDsTest(unittest.TestCase):
     def tearDown(self):
         os.system("kill `cat %s`" % self.pidfile)
         os.remove(self.logfile)
-        os.remove(self.pidfile)
         sleep(.1)
 
     def test_keep_fds(self):
