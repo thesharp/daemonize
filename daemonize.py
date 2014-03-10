@@ -116,7 +116,7 @@ class Daemonize(object):
         try:
             # Create a lockfile so that only one instance of this daemon is running at any time.
             lockfile = open(self.pid, "w")
-        except IOError, ex:
+        except IOError:
             self.logger.error("Unable to create a pidfile.")
             sys.exit(1)
         try:
