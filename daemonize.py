@@ -53,6 +53,14 @@ class Daemonize(object):
         os.remove(self.pid)
         sys.exit(0)
 
+    def exit(self):
+        """ exit method
+        Cleanup pid file at exit.
+        """
+        self.logger.warn("Stopping daemon.")
+        os.remove(self.pid)
+        sys.exit(0)
+
     def start(self):
         """ start method
         Main daemonization process.
@@ -114,7 +122,7 @@ class Daemonize(object):
 
         # Set custom action on SIGTERM.
         signal.signal(signal.SIGTERM, self.sigterm)
-        atexit.register(self.sigterm)
+        atexit.register(self.exit)
 
         self.logger.warn("Starting daemon.")
 
