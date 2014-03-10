@@ -22,10 +22,7 @@ class Daemonize(object):
         self.app = app
         self.pid = pid
         self.action = action
-        if keep_fds:
-            self.keep_fds = keep_fds
-        else:
-            self.keep_fds = []
+        self.keep_fds = keep_fds if keep_fds else []
         # Initialize logging.
         self.logger = logging.getLogger(self.app)
         self.logger.setLevel(logging.DEBUG)
