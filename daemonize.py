@@ -2,6 +2,8 @@
 
 import fcntl
 import os
+import pwd
+import grp
 import sys
 import signal
 import resource
@@ -17,12 +19,19 @@ class Daemonize(object):
     - pid: path to the pidfile.
     - action: your custom function which will be executed after daemonization.
     - keep_fds: optional list of fds which should not be closed.
+    - privileged_action: action that will be executed before drop privileges if user or
+                         group parameter is provided.
+    - user: drop privileges to this user if provided.
+    - group: drop privileges to this group if provided.
     """
-    def __init__(self, app, pid, action, keep_fds=None):
+    def __init__(self, app, pid, action, keep_fds=None, privileged_action=None, user=None, group=None):
         self.app = app
         self.pid = pid
         self.action = action
         self.keep_fds = keep_fds or []
+        self.privileged_action = privileged_action or (lambda: ())
+        self.user = user
+        self.group = group
         # Initialize logging.
         self.logger = logging.getLogger(self.app)
         self.logger.setLevel(logging.DEBUG)
@@ -110,6 +119,35 @@ class Daemonize(object):
         # needs to be deleted results in "directory busy" errors.
         os.chdir("/")
 
+        # Execute privileged action
+        priviled_action_result = self.privileged_action()
+
+        # Change gid
+        if self.group:
+            try:
+                gid = grp.getgrnam(self.group).gr_gid
+            except KeyError:
+                self.logger.error("Group {0} not found".format(self.group))
+                sys.exit(1)
+            try:
+                os.setgid(gid)
+            except OSError:
+                self.logger.error("Unable to change gid.")
+                sys.exit(1)
+
+        # Change uid
+        if self.user:
+            try:
+                uid = pwd.getpwnam(self.user).pw_uid
+            except KeyError:
+                self.logger.error("User {0} not found.".format(self.user))
+                sys.exit(1)
+            try:
+                os.setuid(uid)
+            except OSError:
+                self.logger.error("Unable to change uid.")
+                sys.exit(1)
+
         try:
             # Create a lockfile so that only one instance of this daemon is running at any time.
             lockfile = open(self.pid, "w")
@@ -134,4 +172,4 @@ class Daemonize(object):
 
         self.logger.warn("Starting daemon.")
 
-        self.action()
+        self.action(*priviled_action_result)
