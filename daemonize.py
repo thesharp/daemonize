@@ -131,8 +131,7 @@ class Daemonize(object):
                 sys.exit(1)
             try:
                 os.setgid(gid)
-            except OSError, ex:
-                print ex
+            except OSError:
                 self.logger.error("Unable to change gid.")
                 sys.exit(1)
 
