@@ -1,5 +1,7 @@
 import unittest
 import os
+import pwd
+import grp
 import subprocess
 
 from tempfile import mkstemp
@@ -46,6 +48,28 @@ class KeepFDsTest(unittest.TestCase):
     def test_keep_fds(self):
         log = open(self.logfile, "r").read()
         self.assertEqual(log, "Test\n")
+
+
+class UidGidTest(unittest.TestCase):
+    def setUp(self):
+        self.pidfile = mkstemp()[1]
+        self.logfile = mkstemp()[1]
+
+    def tearDown(self):
+        os.remove(self.logfile)
+
+    @unittest.skipIf(os.getuid() != 0, "Requires supersuer privileges.")
+    def test_uid_gid(self):
+        nobody_uid = pwd.getpwnam("nobody").pw_uid
+        nobody_gid = grp.getgrnam("nobody").gr_gid
+        os.chown(self.pidfile, nobody_uid, nobody_gid)
+        os.chown(self.logfile, nobody_uid, nobody_gid)
+
+        os.system("python tests/daemon_uid_gid.py %s %s" % (self.pidfile, self.logfile))
+        sleep(.1)
+
+        with open(self.logfile, "r") as f:
+            self.assertEqual(f.read(), " ".join(map(str, [nobody_uid] * 2 + [nobody_gid] * 2)))
 
 if __name__ == '__main__':
     unittest.main()
