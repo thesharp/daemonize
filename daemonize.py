@@ -21,8 +21,8 @@ class Daemonize(object):
     - keep_fds: optional list of fds which should not be closed.
     - privileged_action: action that will be executed before drop privileges if user or
                          group parameter is provided.
-    - user: drop privileges to this user.
-    - group: drop privileges to this group.                    
+    - user: drop privileges to this user if provided.
+    - group: drop privileges to this group if provided.
     """
     def __init__(self, app, pid, action, keep_fds=None, privileged_action=None, user=None, group=None):
         self.app = app
@@ -122,30 +122,31 @@ class Daemonize(object):
         # Execute privileged action
         priviled_action_result = self.privileged_action()
 
-        # Change uid
-        if self.user:
-            try:
-                uid = pwd.getpwnam(self.user).pw_uid
-            except KeyError:
-                self.error("User {0} not found.".format(self.user))
-                sys.exit(1)
-            try:
-                os.setuid(uid)
-            except OSError:
-                self.error("Unable to change uid.")
-                sys.exit(1)
-        
         # Change gid
         if self.group:
             try:
                 gid = grp.getgrnam(self.group).gr_gid
             except KeyError:
-                self.error("Group {0} not found".format(self.group))
+                self.logger.error("Group {0} not found".format(self.group))
                 sys.exit(1)
             try:
                 os.setgid(gid)
+            except OSError, ex:
+                print ex
+                self.logger.error("Unable to change gid.")
+                sys.exit(1)
+
+        # Change uid
+        if self.user:
+            try:
+                uid = pwd.getpwnam(self.user).pw_uid
+            except KeyError:
+                self.logger.error("User {0} not found.".format(self.user))
+                sys.exit(1)
+            try:
+                os.setuid(uid)
             except OSError:
-                self.error("Unable to change gid.")
+                self.logger.error("Unable to change uid.")
                 sys.exit(1)
 
         try:
