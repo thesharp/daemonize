@@ -71,5 +71,17 @@ class UidGidTest(unittest.TestCase):
         with open(self.logfile, "r") as f:
             self.assertEqual(f.read(), " ".join(map(str, [nobody_uid] * 2 + [nobody_gid] * 2)))
 
+    @unittest.skipIf(os.getuid() != 0, "Requires supersuer privileges.")
+    def test_uid_gid_action(self):
+        nobody_uid = pwd.getpwnam("nobody").pw_uid
+        nobody_gid = grp.getgrnam("nobody").gr_gid
+        os.chown(self.pidfile, nobody_uid, nobody_gid)
+
+        os.system("python tests/daemon_uid_gid_action.py %s %s" % (self.pidfile, self.logfile))
+        sleep(.1)
+
+        with open(self.logfile, "r") as f:
+            self.assertEqual(f.read(), " ".join(map(str, [nobody_uid] * 2 + [nobody_gid] * 2)))
+
 if __name__ == '__main__':
     unittest.main()
