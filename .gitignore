@@ -1,3 +1,6 @@
 *.pyc
 .ropeproject
 __pycache__
+build
+daemonize.egg-info
+dist
