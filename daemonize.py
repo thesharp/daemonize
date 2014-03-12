@@ -24,7 +24,7 @@ class Daemonize(object):
     - user: drop privileges to this user if provided.
     - group: drop privileges to this group if provided.
     """
-    def __init__(self, app, pid, action, keep_fds=None, privileged_action=None, user=None, group=None):
+    def __init__(self, app, pid, action, keep_fds=None, privileged_action=None, user=None, group=None, verbose=False):
         self.app = app
         self.pid = pid
         self.action = action
@@ -37,6 +37,7 @@ class Daemonize(object):
         self.logger.setLevel(logging.DEBUG)
         # Display log messages only on defined handlers.
         self.logger.propagate = False
+        self.verbose = verbose
 
     def sigterm(self, signum, frame):
         """ sigterm method
@@ -103,7 +104,10 @@ class Daemonize(object):
         else:
             syslog_address = "/dev/log"
         syslog = handlers.SysLogHandler(syslog_address)
-        syslog.setLevel(logging.INFO)
+        if self.verbose:
+            syslog.setLevel(logging.DEBUG)
+        else:
+            syslog.setLevel(logging.INFO)
         # Try to mimic to normal syslog messages.
         formatter = logging.Formatter("%(asctime)s %(name)s: %(message)s",
                                       "%b %e %H:%M:%S")
