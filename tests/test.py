@@ -8,7 +8,10 @@ from tempfile import mkstemp
 from time import sleep
 
 NOBODY_UID = pwd.getpwnam("nobody").pw_uid
-NOBODY_GID = grp.getgrnam("nobody").gr_gid
+if os.path.exists("/etc/debian_version"):
+    NOBODY_GID = grp.getgrnam("nogroup").gr_gid
+else:
+    NOBODY_GID = grp.getgrnam("nobody").gr_gid
 
 
 class DaemonizeTest(unittest.TestCase):
