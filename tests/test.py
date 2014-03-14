@@ -7,6 +7,9 @@ import subprocess
 from tempfile import mkstemp
 from time import sleep
 
+NOBODY_UID = pwd.getpwnam("nobody").pw_uid
+NOBODY_GID = grp.getgrnam("nobody").gr_gid
+
 
 class DaemonizeTest(unittest.TestCase):
     def setUp(self):
@@ -23,9 +26,8 @@ class DaemonizeTest(unittest.TestCase):
         proc = subprocess.Popen("ps ax | awk '{print $1}' | grep `cat %s`" % self.pidfile,
                                 shell=True, stdout=subprocess.PIPE)
         ps_pid = proc.communicate()[0].decode()
-        pidfile = open(self.pidfile, "r")
-        pid = pidfile.read()
-        pidfile.close()
+        with open(self.pidfile, "r") as pidfile:
+            pid = pidfile.read()
         self.assertEqual("%s\n" % pid, ps_pid)
 
     def test_pidfile_presense(self):
@@ -51,7 +53,9 @@ class KeepFDsTest(unittest.TestCase):
 
 
 class UidGidTest(unittest.TestCase):
+
     def setUp(self):
+        self.expected = " ".join(map(str, [NOBODY_UID] * 2 + [NOBODY_GID] * 2))
         self.pidfile = mkstemp()[1]
         self.logfile = mkstemp()[1]
 
@@ -63,31 +67,27 @@ class UidGidTest(unittest.TestCase):
         if os.getuid() != 0:
             return True
 
-        nobody_uid = pwd.getpwnam("nobody").pw_uid
-        nobody_gid = grp.getgrnam("nobody").gr_gid
-        os.chown(self.pidfile, nobody_uid, nobody_gid)
-        os.chown(self.logfile, nobody_uid, nobody_gid)
+        os.chown(self.pidfile, NOBODY_UID, NOBODY_GID)
+        os.chown(self.logfile, NOBODY_UID, NOBODY_GID)
 
         os.system("python tests/daemon_uid_gid.py %s %s" % (self.pidfile, self.logfile))
         sleep(.1)
 
         with open(self.logfile, "r") as f:
-            self.assertEqual(f.read(), " ".join(map(str, [nobody_uid] * 2 + [nobody_gid] * 2)))
+            self.assertEqual(f.read(), self.expected)
 
     def test_uid_gid_action(self):
         # Skip test if user is not root
         if os.getuid() != 0:
             return True
 
-        nobody_uid = pwd.getpwnam("nobody").pw_uid
-        nobody_gid = grp.getgrnam("nobody").gr_gid
-        os.chown(self.pidfile, nobody_uid, nobody_gid)
+        os.chown(self.pidfile, NOBODY_UID, NOBODY_GID)
 
         os.system("python tests/daemon_uid_gid_action.py %s %s" % (self.pidfile, self.logfile))
         sleep(.1)
 
         with open(self.logfile, "r") as f:
-            self.assertEqual(f.read(), " ".join(map(str, [nobody_uid] * 2 + [nobody_gid] * 2)))
+            self.assertEqual(f.read(), self.expected)
 
 if __name__ == '__main__':
     unittest.main()
