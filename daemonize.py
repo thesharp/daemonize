@@ -23,6 +23,7 @@ class Daemonize(object):
                          group parameter is provided.
     - user: drop privileges to this user if provided.
     - group: drop privileges to this group if provided.
+    - verbose: send debug messages to logger if provided.
     """
     def __init__(self, app, pid, action, keep_fds=None, privileged_action=None, user=None, group=None, verbose=False):
         self.app = app
