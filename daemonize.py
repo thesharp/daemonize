@@ -84,15 +84,17 @@ class Daemonize(object):
             devnull = os.devnull
 
         if self.auto_close_fds:
-            for fd in range(resource.getrlimit(resource.RLIMIT_NOFILE)[0]):
+            for fd in range(3, resource.getrlimit(resource.RLIMIT_NOFILE)[0]):
                 if fd not in self.keep_fds:
                     try:
                         os.close(fd)
                     except OSError:
                         pass
-            os.open(devnull, os.O_RDWR)
-            os.dup(0)
-            os.dup(0)
+
+        devnull_fd = os.open(devnull, os.O_RDWR)
+        os.dup2(devnull_fd, 0)
+        os.dup2(devnull_fd, 1)
+        os.dup2(devnull_fd, 2)
 
         if self.logger == None:
             # Initialize logging.
