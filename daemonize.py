@@ -25,7 +25,7 @@ class Daemonize(object):
     - group: drop privileges to this group if provided.
     - verbose: send debug messages to logger if provided.
     """
-    def __init__(self, app, pid, action, keep_fds=None, privileged_action=None, user=None, group=None, verbose=False, logger=None):
+    def __init__(self, app, pid, action, keep_fds=None, auto_close_fds=True, privileged_action=None, user=None, group=None, verbose=False, logger=None):
         self.app = app
         self.pid = pid
         self.action = action
@@ -35,6 +35,7 @@ class Daemonize(object):
         self.group = group
         self.logger = logger
         self.verbose = verbose
+        self.auto_close_fds = auto_close_fds
 
     def sigterm(self, signum, frame):
         """ sigterm method
@@ -82,16 +83,16 @@ class Daemonize(object):
             # than /dev/null.
             devnull = os.devnull
 
-        for fd in range(resource.getrlimit(resource.RLIMIT_NOFILE)[0]):
-            if fd not in self.keep_fds:
-                try:
-                    os.close(fd)
-                except OSError:
-                    pass
-
-        os.open(devnull, os.O_RDWR)
-        os.dup(0)
-        os.dup(0)
+        if self.auto_close_fds:
+            for fd in range(resource.getrlimit(resource.RLIMIT_NOFILE)[0]):
+                if fd not in self.keep_fds:
+                    try:
+                        os.close(fd)
+                    except OSError:
+                        pass
+            os.open(devnull, os.O_RDWR)
+            os.dup(0)
+            os.dup(0)
 
         if self.logger == None:
             # Initialize logging.
