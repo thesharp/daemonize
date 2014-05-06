@@ -25,7 +25,7 @@ class Daemonize(object):
     - group: drop privileges to this group if provided.
     - verbose: send debug messages to logger if provided.
     """
-    def __init__(self, app, pid, action, keep_fds=None, privileged_action=None, user=None, group=None, verbose=False):
+    def __init__(self, app, pid, action, keep_fds=None, privileged_action=None, user=None, group=None, verbose=False, logger=None):
         self.app = app
         self.pid = pid
         self.action = action
@@ -33,11 +33,7 @@ class Daemonize(object):
         self.privileged_action = privileged_action or (lambda: ())
         self.user = user
         self.group = group
-        # Initialize logging.
-        self.logger = logging.getLogger(self.app)
-        self.logger.setLevel(logging.DEBUG)
-        # Display log messages only on defined handlers.
-        self.logger.propagate = False
+        self.logger = logger
         self.verbose = verbose
 
     def sigterm(self, signum, frame):
@@ -97,24 +93,31 @@ class Daemonize(object):
         os.dup(0)
         os.dup(0)
 
-        # Initialize syslog.
-        # It will work on OS X and Linux. No FreeBSD support, guys, I don't want to import re here
-        # to parse your peculiar platform string.
-        if sys.platform == "darwin":
-            syslog_address = "/var/run/syslog"
-        else:
-            syslog_address = "/dev/log"
-        syslog = handlers.SysLogHandler(syslog_address)
-        if self.verbose:
-            syslog.setLevel(logging.DEBUG)
-        else:
-            syslog.setLevel(logging.INFO)
-        # Try to mimic to normal syslog messages.
-        formatter = logging.Formatter("%(asctime)s %(name)s: %(message)s",
-                                      "%b %e %H:%M:%S")
-        syslog.setFormatter(formatter)
+        if self.logger == None:
+            # Initialize logging.
+            self.logger = logging.getLogger(self.app)
+            self.logger.setLevel(logging.DEBUG)
+            # Display log messages only on defined handlers.
+            self.logger.propagate = False
 
-        self.logger.addHandler(syslog)
+            # Initialize syslog.
+            # It will work on OS X and Linux. No FreeBSD support, guys, I don't want to import re here
+            # to parse your peculiar platform string.
+            if sys.platform == "darwin":
+                syslog_address = "/var/run/syslog"
+            else:
+                syslog_address = "/dev/log"
+            syslog = handlers.SysLogHandler(syslog_address)
+            if self.verbose:
+                syslog.setLevel(logging.DEBUG)
+            else:
+                syslog.setLevel(logging.INFO)
+            # Try to mimic to normal syslog messages.
+            formatter = logging.Formatter("%(asctime)s %(name)s: %(message)s",
+                                          "%b %e %H:%M:%S")
+            syslog.setFormatter(formatter)
+
+            self.logger.addHandler(syslog)
 
         # Set umask to default to safe file permissions when running as a root daemon. 027 is an
         # octal number which we are typing as 0o27 for Python3 compatibility.
