@@ -38,6 +38,24 @@ class DaemonizeTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(self.pidfile))
 
 
+class LockingTest(unittest.TestCase):
+    def setUp(self):
+        self.pidfile = mkstemp()[1]
+        print "First daemonize process started"
+        os.system("python tests/daemon_sigterm.py %s" % self.pidfile)
+        sleep(.1)
+
+    def tearDown(self):
+        os.system("kill `cat %s`" % self.pidfile)
+        sleep(.1)
+
+    def test_locking(self):
+        sleep(10)
+        print "Attempting to start second daemonize process"
+        with self.assertRaises(subprocess.CalledProcessError):
+            subprocess.check_call(["python", "tests/daemon_sigterm.py", self.pidfile])
+
+
 class KeepFDsTest(unittest.TestCase):
     def setUp(self):
         self.pidfile = mkstemp()[1]

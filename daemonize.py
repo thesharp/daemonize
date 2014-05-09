@@ -59,6 +59,28 @@ class Daemonize(object):
         """ start method
         Main daemonization process.
         """
+        # If pidfile already exists, we should read pid from there; to overwrite it, if locking
+        # will fail, because locking attempt somehow purges the file contents.
+        if os.path.isfile(self.pid):
+            with open(self.pid, "r") as old_pidfile:
+                old_pid = old_pidfile.read()
+        # Create a lockfile so that only one instance of this daemon is running at any time.
+        try:
+            lockfile = open(self.pid, "w")
+        except IOError:
+            print("Unable to create the pidfile.")
+            sys.exit(1)
+        try:
+            # Try to get an exclusive lock on the file. This will fail if another process has the file
+            # locked.
+            fcntl.flock(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except IOError:
+            print("Unable to lock on the pidfile.")
+            # We need to overwrite the pidfile if we got here.
+            with open(self.pid, "w") as pidfile:
+                pidfile.write(old_pid)
+            sys.exit(1)
+
         # Fork, creating a new process for the child.
         process_id = os.fork()
         if process_id < 0:
@@ -77,6 +99,9 @@ class Daemonize(object):
         if process_id == -1:
             # Uh oh, there was a problem.
             sys.exit(1)
+
+        # Add lockfile to self.keep_fds.
+        self.keep_fds.append(lockfile.fileno())
 
         # Close all file descriptors, except the ones mentioned in self.keep_fds.
         devnull = "/dev/null"
@@ -166,21 +191,11 @@ class Daemonize(object):
                 sys.exit(1)
 
         try:
-            # Create a lockfile so that only one instance of this daemon is running at any time.
-            lockfile = open(self.pid, "w")
-        except IOError:
-            self.logger.error("Unable to create a pidfile.")
-            sys.exit(1)
-        try:
-            # Try to get an exclusive lock on the file. This will fail if another process has the file
-            # locked.
-            fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            # Record the process id to the lockfile. This is standard practice for daemons.
             lockfile.write("%s" % (os.getpid()))
             lockfile.flush()
         except IOError:
-            self.logger.error("Unable to lock on the pidfile.")
-            os.remove(self.pid)
+            self.logger.error("Unable to write pid to the pidfile.")
+            print("Unable to write pid to the pidfile.")
             sys.exit(1)
 
         # Set custom action on SIGTERM.
