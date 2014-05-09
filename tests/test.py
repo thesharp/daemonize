@@ -41,7 +41,7 @@ class DaemonizeTest(unittest.TestCase):
 class LockingTest(unittest.TestCase):
     def setUp(self):
         self.pidfile = mkstemp()[1]
-        print "First daemonize process started"
+        print("First daemonize process started")
         os.system("python tests/daemon_sigterm.py %s" % self.pidfile)
         sleep(.1)
 
@@ -51,9 +51,9 @@ class LockingTest(unittest.TestCase):
 
     def test_locking(self):
         sleep(10)
-        print "Attempting to start second daemonize process"
-        with self.assertRaises(subprocess.CalledProcessError):
-            subprocess.check_call(["python", "tests/daemon_sigterm.py", self.pidfile])
+        print("Attempting to start second daemonize process")
+        proc = subprocess.call(["python", "tests/daemon_sigterm.py", self.pidfile])
+        self.assertEqual(proc, 1)
 
 
 class KeepFDsTest(unittest.TestCase):
