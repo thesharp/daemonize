@@ -56,7 +56,6 @@ class KeepFDsTest(unittest.TestCase):
 
 
 class UidGidTest(unittest.TestCase):
-
     def setUp(self):
         self.expected = " ".join(map(str, [NOBODY_UID] * 2 + [NOBODY_GID] * 2))
         self.pidfile = mkstemp()[1]
