@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="daemonize",
-    version="2.2.3",
+    version="2.3",
     py_modules=["daemonize"],
     author="Ilya Otyutskiy",
     author_email="ilya.otyutskiy@icloud.com",
