@@ -19,11 +19,13 @@ class Daemonize(object):
     - pid: path to the pidfile.
     - action: your custom function which will be executed after daemonization.
     - keep_fds: optional list of fds which should not be closed.
+    - auto_close_fds: optional parameter to not close opened fds.
     - privileged_action: action that will be executed before drop privileges if user or
                          group parameter is provided.
     - user: drop privileges to this user if provided.
     - group: drop privileges to this group if provided.
     - verbose: send debug messages to logger if provided.
+    - logger: use this logger object instead of creating new one, if provided.
     """
     def __init__(self, app, pid, action, keep_fds=None, auto_close_fds=True, privileged_action=None, user=None, group=None, verbose=False, logger=None):
         self.app = app
