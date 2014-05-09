@@ -98,7 +98,7 @@ class Daemonize(object):
         os.dup2(devnull_fd, 1)
         os.dup2(devnull_fd, 2)
 
-        if self.logger == None:
+        if self.logger is None:
             # Initialize logging.
             self.logger = logging.getLogger(self.app)
             self.logger.setLevel(logging.DEBUG)
