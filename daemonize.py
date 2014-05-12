@@ -131,8 +131,7 @@ class Daemonize(object):
             self.logger.propagate = False
 
             # Initialize syslog.
-            # It will work on OS X and Linux. No FreeBSD support, guys, I don't want to import re here
-            # to parse your peculiar platform string.
+            # It will correctly work on OS X, Linux and FreeBSD.
             if sys.platform == "darwin":
                 syslog_address = "/var/run/syslog"
             else:
