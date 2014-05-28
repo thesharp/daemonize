@@ -162,6 +162,8 @@ class Daemonize(object):
 
         # Execute privileged action
         priviled_action_result = self.privileged_action()
+        if not priviled_action_result: 
+            priviled_action_result = []
 
         # Change gid
         if self.group:
