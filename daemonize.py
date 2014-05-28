@@ -22,6 +22,9 @@ class Daemonize(object):
     - auto_close_fds: optional parameter to not close opened fds.
     - privileged_action: action that will be executed before drop privileges if user or
                          group parameter is provided.
+                         If you want to transfer anything from privileged_action to action, such as
+                         opened privileged file descriptor, you should return it from
+                         privileged_action function and catch it inside action function.
     - user: drop privileges to this user if provided.
     - group: drop privileges to this group if provided.
     - verbose: send debug messages to logger if provided.
@@ -161,9 +164,9 @@ class Daemonize(object):
         os.chdir("/")
 
         # Execute privileged action
-        priviled_action_result = self.privileged_action()
-        if not priviled_action_result: 
-            priviled_action_result = []
+        privileged_action_result = self.privileged_action()
+        if not privileged_action_result:
+            privileged_action_result = []
 
         # Change gid
         if self.group:
@@ -205,4 +208,4 @@ class Daemonize(object):
 
         self.logger.warn("Starting daemon.")
 
-        self.action(*priviled_action_result)
+        self.action(*privileged_action_result)
