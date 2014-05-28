@@ -109,5 +109,27 @@ class UidGidTest(unittest.TestCase):
         with open(self.logfile, "r") as f:
             self.assertEqual(f.read(), self.expected)
 
+
+class PrivilegedActionTest(unittest.TestCase):
+    def setUp(self):
+        self.correct_log = """Privileged action.
+Starting daemon.
+Action.
+Stopping daemon.
+"""
+        self.pidfile = mkstemp()[1]
+        self.logfile = mkstemp()[1]
+        os.system("python tests/daemon_privileged_action.py %s %s" % (self.pidfile, self.logfile))
+        sleep(.1)
+
+    def tearDown(self):
+        os.system("kill `cat %s`" % self.pidfile)
+        sleep(.1)
+
+    def test_privileged_action(self):
+        sleep(5)
+        with open(self.logfile, "r") as contents:
+            self.assertEqual(contents.read(), self.correct_log)
+
 if __name__ == '__main__':
     unittest.main()
