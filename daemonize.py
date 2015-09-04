@@ -142,7 +142,7 @@ class Daemonize(object):
 
             # We will continue with syslog initialization only if actually have such capabilities
             # on the machine we are running this.
-            if os.path.isfile(syslog_address):
+            if os.path.exists(syslog_address):
                 syslog = handlers.SysLogHandler(syslog_address)
                 if self.verbose:
                     syslog.setLevel(logging.DEBUG)
