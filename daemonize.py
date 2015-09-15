@@ -29,8 +29,9 @@ class Daemonize(object):
     - group: drop privileges to this group if provided.
     - verbose: send debug messages to logger if provided.
     - logger: use this logger object instead of creating new one, if provided.
+    - foreground: stay in foreground; do not fork (for debugging)
     """
-    def __init__(self, app, pid, action, keep_fds=None, auto_close_fds=True, privileged_action=None, user=None, group=None, verbose=False, logger=None):
+    def __init__(self, app, pid, action, keep_fds=None, auto_close_fds=True, privileged_action=None, user=None, group=None, verbose=False, logger=None, foreground=False):
         self.app = app
         self.pid = pid
         self.action = action
@@ -41,6 +42,7 @@ class Daemonize(object):
         self.logger = logger
         self.verbose = verbose
         self.auto_close_fds = auto_close_fds
+        self.foreground = foreground
 
     def sigterm(self, signum, frame):
         """ sigterm method
@@ -84,47 +86,49 @@ class Daemonize(object):
                 pidfile.write(old_pid)
             sys.exit(1)
 
-        # Fork, creating a new process for the child.
-        process_id = os.fork()
-        if process_id < 0:
-            # Fork error. Exit badly.
-            sys.exit(1)
-        elif process_id != 0:
-            # This is the parent process. Exit.
-            sys.exit(0)
-        # This is the child process. Continue.
+        # skip fork if foreground is specified
+        if not self.foreground:
+            # Fork, creating a new process for the child.
+            process_id = os.fork()
+            if process_id < 0:
+                # Fork error. Exit badly.
+                sys.exit(1)
+            elif process_id != 0:
+                # This is the parent process. Exit.
+                sys.exit(0)
+            # This is the child process. Continue.
 
-        # Stop listening for signals that the parent process receives.
-        # This is done by getting a new process id.
-        # setpgrp() is an alternative to setsid().
-        # setsid puts the process in a new parent group and detaches its controlling terminal.
-        process_id = os.setsid()
-        if process_id == -1:
-            # Uh oh, there was a problem.
-            sys.exit(1)
+            # Stop listening for signals that the parent process receives.
+            # This is done by getting a new process id.
+            # setpgrp() is an alternative to setsid().
+            # setsid puts the process in a new parent group and detaches its controlling terminal.
+            process_id = os.setsid()
+            if process_id == -1:
+                # Uh oh, there was a problem.
+                sys.exit(1)
 
-        # Add lockfile to self.keep_fds.
-        self.keep_fds.append(lockfile.fileno())
+            # Add lockfile to self.keep_fds.
+            self.keep_fds.append(lockfile.fileno())
 
-        # Close all file descriptors, except the ones mentioned in self.keep_fds.
-        devnull = "/dev/null"
-        if hasattr(os, "devnull"):
-            # Python has set os.devnull on this system, use it instead as it might be different
-            # than /dev/null.
-            devnull = os.devnull
+            # Close all file descriptors, except the ones mentioned in self.keep_fds.
+            devnull = "/dev/null"
+            if hasattr(os, "devnull"):
+                # Python has set os.devnull on this system, use it instead as it might be different
+                # than /dev/null.
+                devnull = os.devnull
 
-        if self.auto_close_fds:
-            for fd in range(3, resource.getrlimit(resource.RLIMIT_NOFILE)[0]):
-                if fd not in self.keep_fds:
-                    try:
-                        os.close(fd)
-                    except OSError:
-                        pass
+            if self.auto_close_fds:
+                for fd in range(3, resource.getrlimit(resource.RLIMIT_NOFILE)[0]):
+                    if fd not in self.keep_fds:
+                        try:
+                            os.close(fd)
+                        except OSError:
+                            pass
 
-        devnull_fd = os.open(devnull, os.O_RDWR)
-        os.dup2(devnull_fd, 0)
-        os.dup2(devnull_fd, 1)
-        os.dup2(devnull_fd, 2)
+            devnull_fd = os.open(devnull, os.O_RDWR)
+            os.dup2(devnull_fd, 0)
+            os.dup2(devnull_fd, 1)
+            os.dup2(devnull_fd, 2)
 
         if self.logger is None:
             # Initialize logging.
