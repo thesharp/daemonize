@@ -9,3 +9,4 @@ script: nosetests; sphinx-build -b html docs docs/_build
 notifications:
     webhooks:
         - http://moriarty.thesharp.org:5000/travis/2c27baee8754c01522cf751c1ed393b1/
+sudo: false
