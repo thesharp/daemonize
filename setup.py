@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import re
+import ast
 
 from setuptools import setup, find_packages
 
