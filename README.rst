@@ -70,11 +70,5 @@ For example:
     daemon = Daemonize(app="test_app", pid=pid, action=main, keep_fds=keep_fds)
     daemon.start()
 
-API
----
-
-.. automodule:: daemonize
-    :members:
-
 .. |Build Status| image:: https://secure.travis-ci.org/thesharp/daemonize.png
    :target: http://travis-ci.org/thesharp/daemonize

@@ -5,6 +5,13 @@
 
 .. include:: ../README.rst
 
+API
+---
+
+.. automodule:: daemonize
+    :members:
+
+
 Indices and tables
 ==================
 
