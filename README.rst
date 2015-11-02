@@ -1,4 +1,4 @@
-daemonize |Build Status|
+daemonize |Build Status| |Documentation Status|
 ========================
 
 **daemonize** is a library for writing system daemons in Python. It has
@@ -72,3 +72,6 @@ For example:
 
 .. |Build Status| image:: https://secure.travis-ci.org/thesharp/daemonize.png
    :target: http://travis-ci.org/thesharp/daemonize
+
+.. |Documentation Status| image:: https://readthedocs.org/projects/daemonize/badge/?version=latest
+   :target: http://daemonize.readthedocs.org/en/latest/?badge=latest
