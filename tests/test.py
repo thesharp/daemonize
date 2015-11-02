@@ -133,7 +133,7 @@ Stopping daemon.
             self.assertEqual(contents.read(), self.correct_log)
 
 
-class KeepFDsTest(unittest.TestCase):
+class ChdirTest(unittest.TestCase):
     def setUp(self):
         self.pidfile = mkstemp()[1]
         self.target = mkstemp()[1]
