@@ -12,24 +12,30 @@ import atexit
 from logging import handlers
 
 
+__version__ = "2.3.1"
+
+
 class Daemonize(object):
-    """ Daemonize object
-    Object constructor expects three arguments:
-    - app: contains the application name which will be sent to syslog.
-    - pid: path to the pidfile.
-    - action: your custom function which will be executed after daemonization.
-    - keep_fds: optional list of fds which should not be closed.
-    - auto_close_fds: optional parameter to not close opened fds.
-    - privileged_action: action that will be executed before drop privileges if user or
-                         group parameter is provided.
-                         If you want to transfer anything from privileged_action to action, such as
-                         opened privileged file descriptor, you should return it from
-                         privileged_action function and catch it inside action function.
-    - user: drop privileges to this user if provided.
-    - group: drop privileges to this group if provided.
-    - verbose: send debug messages to logger if provided.
-    - logger: use this logger object instead of creating new one, if provided.
-    - foreground: stay in foreground; do not fork (for debugging)
+    """
+    Daemonize object.
+
+    Object constructor expects three arguments.
+
+    :param app: contains the application name which will be sent to syslog.
+    :param pid: path to the pidfile.
+    :param action: your custom function which will be executed after daemonization.
+    :param keep_fds: optional list of fds which should not be closed.
+    :param auto_close_fds: optional parameter to not close opened fds.
+    :param privileged_action: action that will be executed before drop privileges if user or
+                              group parameter is provided.
+                              If you want to transfer anything from privileged_action to action, such as
+                              opened privileged file descriptor, you should return it from
+                              privileged_action function and catch it inside action function.
+    :param user: drop privileges to this user if provided.
+    :param group: drop privileges to this group if provided.
+    :param verbose: send debug messages to logger if provided.
+    :param logger: use this logger object instead of creating new one, if provided.
+    :param foreground: stay in foreground; do not fork (for debugging)
     """
     def __init__(self, app, pid, action, keep_fds=None, auto_close_fds=True, privileged_action=None, user=None, group=None, verbose=False, logger=None, foreground=False):
         self.app = app
@@ -45,7 +51,7 @@ class Daemonize(object):
         self.foreground = foreground
 
     def sigterm(self, signum, frame):
-        """ sigterm method
+        """
         These actions will be done after SIGTERM.
         """
         self.logger.warn("Caught signal %s. Stopping daemon." % signum)
@@ -53,7 +59,7 @@ class Daemonize(object):
         sys.exit(0)
 
     def exit(self):
-        """ exit method
+        """
         Cleanup pid file at exit.
         """
         self.logger.warn("Stopping daemon.")
@@ -61,8 +67,8 @@ class Daemonize(object):
         sys.exit(0)
 
     def start(self):
-        """ start method
-        Main daemonization process.
+        """
+        Start daemonization process.
         """
         # If pidfile already exists, we should read pid from there; to overwrite it, if locking
         # will fail, because locking attempt somehow purges the file contents.

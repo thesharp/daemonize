@@ -1,10 +1,20 @@
 #!/usr/bin/python
 
+import re
+import ast
+
 from setuptools import setup, find_packages
+
+_version_re = re.compile(r'__version__\s+=\s+(.*)')
+
+
+with open('daemonize.py', 'rb') as f:
+    version = str(ast.literal_eval(_version_re.search(
+        f.read().decode('utf-8')).group(1)))
 
 setup(
     name="daemonize",
-    version="2.3.1",
+    version=version,
     py_modules=["daemonize"],
     author="Ilya Otyutskiy",
     author_email="ilya.otyutskiy@icloud.com",

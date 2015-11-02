@@ -1,6 +1,7 @@
 *.pyc
 .ropeproject
 __pycache__
+docs/_build
 build
 daemonize.egg-info
 dist
