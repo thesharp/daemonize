@@ -12,7 +12,7 @@ import atexit
 from logging import handlers
 
 
-__version__ = "2.3.1"
+__version__ = "2.4"
 
 
 class Daemonize(object):
@@ -53,7 +53,7 @@ class Daemonize(object):
         self.verbose = verbose
         self.auto_close_fds = auto_close_fds
         self.foreground = foreground
-        self.chdir=chdir
+        self.chdir = chdir
 
     def sigterm(self, signum, frame):
         """
