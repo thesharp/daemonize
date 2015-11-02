@@ -25,6 +25,7 @@ It is tested under following Python versions:
 -  2.7
 -  3.3
 -  3.4
+-  3.5
 
 Installation
 ------------
