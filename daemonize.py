@@ -36,8 +36,12 @@ class Daemonize(object):
     :param verbose: send debug messages to logger if provided.
     :param logger: use this logger object instead of creating new one, if provided.
     :param foreground: stay in foreground; do not fork (for debugging)
+    :param chdir: change working directory if provided or /
     """
-    def __init__(self, app, pid, action, keep_fds=None, auto_close_fds=True, privileged_action=None, user=None, group=None, verbose=False, logger=None, foreground=False):
+    def __init__(self, app, pid, action,
+                 keep_fds=None, auto_close_fds=True, privileged_action=None,
+                 user=None, group=None, verbose=False, logger=None,
+                 foreground=False, chdir="/"):
         self.app = app
         self.pid = pid
         self.action = action
@@ -49,6 +53,7 @@ class Daemonize(object):
         self.verbose = verbose
         self.auto_close_fds = auto_close_fds
         self.foreground = foreground
+        self.chdir=chdir
 
     def sigterm(self, signum, frame):
         """
@@ -171,7 +176,7 @@ class Daemonize(object):
 
         # Change to a known directory. If this isn't done, starting a daemon in a subdirectory that
         # needs to be deleted results in "directory busy" errors.
-        os.chdir("/")
+        os.chdir(self.chdir)
 
         # Execute privileged action
         privileged_action_result = self.privileged_action()

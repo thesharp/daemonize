@@ -6,6 +6,7 @@ import subprocess
 
 from tempfile import mkstemp
 from time import sleep
+from os.path import split
 
 NOBODY_UID = pwd.getpwnam("nobody").pw_uid
 if os.path.exists("/etc/debian_version"):
@@ -130,6 +131,24 @@ Stopping daemon.
         sleep(5)
         with open(self.logfile, "r") as contents:
             self.assertEqual(contents.read(), self.correct_log)
+
+
+class KeepFDsTest(unittest.TestCase):
+    def setUp(self):
+        self.pidfile = mkstemp()[1]
+        self.target = mkstemp()[1]
+        base, file = split(self.target)
+
+        os.system("python tests/daemon_chdir.py %s %s %s" % (self.pidfile, base, file))
+        sleep(1)
+
+    def tearDown(self):
+        os.system("kill `cat %s`" % self.pidfile)
+        sleep(.1)
+
+    def test_keep_fds(self):
+        log = open(self.target, "r").read()
+        self.assertEqual(log, "test")
 
 if __name__ == '__main__':
     unittest.main()
