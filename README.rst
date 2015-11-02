@@ -1,5 +1,15 @@
-daemonize |Build Status| |Documentation Status|
+daemonize
 ========================
+
+
+.. image:: https://readthedocs.org/projects/daemonize/badge/?version=latest
+    :target: http://daemonize.readthedocs.org/en/latest/?badge=latest
+    :alt: Latest version
+
+.. image:: https://secure.travis-ci.org/thesharp/daemonize.png
+    :target: http://travis-ci.org/thesharp/daemonize
+    :alt: Travis CI
+
 
 **daemonize** is a library for writing system daemons in Python. It has
 some bits from
@@ -14,6 +24,7 @@ It is tested under following Python versions:
 -  2.6
 -  2.7
 -  3.3
+-  3.4
 
 Installation
 ------------
@@ -27,7 +38,7 @@ You can install it from Python Package Index (PyPI):
 Usage
 -----
 
-.. code:: python
+.. code-block:: python
 
     from time import sleep
     from daemonize import Daemonize
@@ -49,7 +60,7 @@ Daemonize object's constructor understands the optional argument
 **keep\_fds** which contains a list of FDs which should not be closed.
 For example:
 
-.. code:: python
+.. code-block:: python
 
     import logging
     from daemonize import Daemonize
@@ -69,9 +80,3 @@ For example:
 
     daemon = Daemonize(app="test_app", pid=pid, action=main, keep_fds=keep_fds)
     daemon.start()
-
-.. |Build Status| image:: https://secure.travis-ci.org/thesharp/daemonize.png
-   :target: http://travis-ci.org/thesharp/daemonize
-
-.. |Documentation Status| image:: https://readthedocs.org/projects/daemonize/badge/?version=latest
-   :target: http://daemonize.readthedocs.org/en/latest/?badge=latest
