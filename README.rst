@@ -6,15 +6,28 @@ daemonize
     :target: http://daemonize.readthedocs.org/en/latest/?badge=latest
     :alt: Latest version
 
-.. image:: https://secure.travis-ci.org/thesharp/daemonize.png
+.. image:: https://img.shields.io/travis/thesharp/daemonize.svg
     :target: http://travis-ci.org/thesharp/daemonize
     :alt: Travis CI
 
+.. image:: https://img.shields.io/pypi/dm/daemonize.svg
+    :target: https://pypi.python.org/pypi/daemonize
+    :alt: PyPI montly downloads
 
-**daemonize** is a library for writing system daemons in Python. It has
-some bits from
-`daemonize.sourceforge.net <http://daemonize.sourceforge.net>`__. It is
-distributed under MIT license.
+.. image:: https://img.shields.io/pypi/v/daemonize.svg
+    :target: https://pypi.python.org/pypi/daemonize
+    :alt: PyPI last version available
+
+.. image:: https://img.shields.io/pypi/l/daemonize.svg
+    :target: https://pypi.python.org/pypi/daemonize
+    :alt: PyPI license
+
+
+**daemonize** is a library for writing system daemons in Python. It is
+distributed under MIT license. Latest version can be downloaded from
+`PyPI <https://pypi.python.org/pypi/daemonize>`__. Full documentation can
+be found at
+`ReadTheDocs <http://daemonize.readthedocs.org/en/latest/?badge=latest>`__.
 
 Dependencies
 ------------
