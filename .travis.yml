@@ -9,5 +9,5 @@ install: sudo pip install nose sphinx sphinx_rtd_theme; sudo pip install .
 script: sudo nosetests && sudo sphinx-build -b html docs docs/_build
 notifications:
     webhooks:
-        - http://moriarty.thesharp.org:5000/travis/2c27baee8754c01522cf751c1ed393b1/
+        - http://ci.thesharp.org:8888/travis
 sudo: true
