@@ -184,18 +184,27 @@ class Daemonize(object):
             privileged_action_result = []
 
         # Change owner of pid file, it's required because pid file will be removed at exit.
-        pid_uid = self.user or -1
-        pid_gid = self.group or -1
-        if pid_uid != -1 or pid_gid != -1:
-            os.chown(self.pid, pid_uid, pid_gid)
+        uid, gid = -1, -1
 
-        # Change gid
         if self.group:
             try:
                 gid = grp.getgrnam(self.group).gr_gid
             except KeyError:
                 self.logger.error("Group {0} not found".format(self.group))
                 sys.exit(1)
+
+        if self.user:
+            try:
+                uid = pwd.getpwnam(self.user).pw_uid
+            except KeyError:
+                self.logger.error("User {0} not found.".format(self.user))
+                sys.exit(1)
+
+        if uid != -1 or gid != -1:
+            os.chown(self.pid, uid, gid)
+
+        # Change gid
+        if self.group:
             try:
                 os.setgid(gid)
             except OSError:
