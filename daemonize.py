@@ -12,7 +12,7 @@ import atexit
 from logging import handlers
 
 
-__version__ = "2.4.1"
+__version__ = "2.4.2"
 
 
 class Daemonize(object):
