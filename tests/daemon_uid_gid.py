@@ -17,5 +17,5 @@ def main():
         f.write(" ".join(map(str, uids + gids)))
 
 
-daemon = Daemonize(app="test_app", pid=pid, action=main, user="nobody", group="nobody")
+daemon = Daemonize(app="test_app", pid=pid, action=main, user="nobody", group="nobody", keep_fds=[1, 2])
 daemon.start()
