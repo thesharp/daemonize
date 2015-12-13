@@ -182,7 +182,7 @@ class Daemonize(object):
         privileged_action_result = self.privileged_action()
         if not privileged_action_result:
             privileged_action_result = []
-            
+
         # Change owner of pid file, it's required because pid file will be removed at exit.
         pid_uid = self.user or -1
         pid_gid = self.group or -1
