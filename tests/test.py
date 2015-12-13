@@ -91,7 +91,7 @@ class UidGidTest(unittest.TestCase):
         os.chown(self.logfile, NOBODY_UID, NOBODY_GID)
 
         os.system("python tests/daemon_uid_gid.py %s %s" % (self.pidfile, self.logfile))
-        sleep(.1)
+        sleep(1)
 
         with open(self.logfile, "r") as f:
             self.assertEqual(f.read(), self.expected)
@@ -105,7 +105,7 @@ class UidGidTest(unittest.TestCase):
         os.chown(self.pidfile, NOBODY_UID, NOBODY_GID)
 
         os.system("python tests/daemon_uid_gid_action.py %s %s" % (self.pidfile, self.logfile))
-        sleep(.1)
+        sleep(1)
 
         with open(self.logfile, "r") as f:
             self.assertEqual(f.read(), self.expected)
