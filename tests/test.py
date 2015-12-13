@@ -88,7 +88,6 @@ class UidGidTest(unittest.TestCase):
         if os.getuid() != 0:
             return True
 
-        os.chown(self.pidfile, NOBODY_UID, NOBODY_GID)
         os.chown(self.logfile, NOBODY_UID, NOBODY_GID)
 
         os.system("python tests/daemon_uid_gid.py %s %s" % (self.pidfile, self.logfile))
