@@ -1,13 +1,7 @@
-all: clean sdist wheel
+all: clean upload
 
 clean:
 	rm -rf dist daemonize.egg-info
 
-sdist:
-	python setup.py sdist
-
-wheel:
-	python setup.py bdist_wheel
-
 upload:
-	python setup.py upload
+	python setup.py sdist bdist_wheel upload
