@@ -6,8 +6,8 @@ python:
     - "3.4"
     - "3.5"
 install: pip install .; pip install sphinx sphinx_rtd_theme
-script: nosetests; sphinx-build -b html docs docs/_build
+script: sudo nosetests; sphinx-build -b html docs docs/_build
 notifications:
     webhooks:
         - http://moriarty.thesharp.org:5000/travis/2c27baee8754c01522cf751c1ed393b1/
-sudo: false
+sudo: true
