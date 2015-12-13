@@ -17,5 +17,7 @@ def main():
         f.write(" ".join(map(str, uids + gids)))
 
 
-daemon = Daemonize(app="test_app", pid=pid, action=main, user="nobody", group="nobody", keep_fds=[1, 2])
+group = "nogroup" if os.path.exists("/etc/debian_version") else "nobody"
+
+daemon = Daemonize(app="test_app", pid=pid, action=main, user="nobody", group=group)
 daemon.start()
