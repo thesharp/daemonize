@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from os import getuid, geteuid, getgid, getegid
+from os import getuid, geteuid, getgid, getegid, path
 from sys import argv
 from time import sleep
 
@@ -20,6 +20,8 @@ def main(f):
     f.write(" ".join(map(str, uids + gids)))
 
 
-daemon = Daemonize(app="test_app", pid=pid, action=main, user="nobody", group="nobody",
+group = "nogroup" if path.exists("/etc/debian_version") else "nobody"
+
+daemon = Daemonize(app="test_app", pid=pid, action=main, user="nobody", group=group,
                    privileged_action=priv)
 daemon.start()
