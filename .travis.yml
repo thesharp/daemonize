@@ -5,7 +5,7 @@ python:
     - "3.3"
     - "3.4"
     - "3.5"
-install: pip install .; pip install sphinx sphinx_rtd_theme
+install: pip install .; pip install nose sphinx sphinx_rtd_theme
 script: sudo nosetests; sphinx-build -b html docs docs/_build
 notifications:
     webhooks:
