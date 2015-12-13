@@ -95,6 +95,7 @@ class UidGidTest(unittest.TestCase):
 
         with open(self.logfile, "r") as f:
             self.assertEqual(f.read(), self.expected)
+        self.assertEqual(not os.access(self.pidfile, os.F_OK))
 
     def test_uid_gid_action(self):
         # Skip test if user is not root
