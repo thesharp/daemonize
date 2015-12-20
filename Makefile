@@ -5,3 +5,6 @@ clean:
 
 upload:
 	python setup.py sdist bdist_wheel upload
+
+docs:
+	sphinx-build -b html docs docs/_build
