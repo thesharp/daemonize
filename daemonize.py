@@ -12,7 +12,7 @@ import atexit
 from logging import handlers
 
 
-__version__ = "2.4.2"
+__version__ = "2.4.3"
 
 
 class Daemonize(object):
@@ -60,7 +60,6 @@ class Daemonize(object):
         These actions will be done after SIGTERM.
         """
         self.logger.warn("Caught signal %s. Stopping daemon." % signum)
-        os.remove(self.pid)
         sys.exit(0)
 
     def exit(self):
