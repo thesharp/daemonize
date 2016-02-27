@@ -10,6 +10,7 @@ import resource
 import logging
 import atexit
 from logging import handlers
+import traceback
 
 
 __version__ = "2.4.3"
@@ -237,4 +238,8 @@ class Daemonize(object):
 
         self.logger.warn("Starting daemon.")
 
-        self.action(*privileged_action_result)
+        try:
+            self.action(*privileged_action_result)
+        except Exception as e:
+            for line in traceback.format_exc(e).split("\n"):
+                self.logger.error(line)
