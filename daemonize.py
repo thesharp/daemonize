@@ -105,8 +105,9 @@ class Daemonize(object):
                 # Fork error. Exit badly.
                 sys.exit(1)
             elif process_id != 0:
-                # This is the parent process. Exit.
-                sys.exit(0)
+                # This is the parent process. Exit without cleanup,
+                # see https://github.com/thesharp/daemonize/issues/46
+                os._exit(0)
             # This is the child process. Continue.
 
             # Stop listening for signals that the parent process receives.
