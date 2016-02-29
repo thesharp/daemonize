@@ -100,11 +100,12 @@ class Daemonize(object):
         # skip fork if foreground is specified
         if not self.foreground:
             # Fork, creating a new process for the child.
-            process_id = os.fork()
-            if process_id < 0:
-                # Fork error. Exit badly.
+            try:
+                process_id = os.fork()
+            except OSError as e:
+                self.logger.error("Unable to fork, errno: {0}".format(e.errno))
                 sys.exit(1)
-            elif process_id != 0:
+            if process_id != 0:
                 # This is the parent process. Exit without cleanup,
                 # see https://github.com/thesharp/daemonize/issues/46
                 os._exit(0)
