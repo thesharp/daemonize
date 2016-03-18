@@ -30,6 +30,7 @@ setup(
                  "Operating System :: POSIX :: Linux",
                  "Operating System :: POSIX :: BSD :: FreeBSD",
                  "Operating System :: POSIX :: BSD :: OpenBSD",
+                 "Operating System :: POSIX :: BSD :: NetBSD",
                  "Programming Language :: Python",
                  "Programming Language :: Python :: 2.6",
                  "Programming Language :: Python :: 2.7",
