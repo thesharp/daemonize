@@ -44,7 +44,7 @@ class Daemonize(object):
                  user=None, group=None, verbose=False, logger=None,
                  foreground=False, chdir="/"):
         self.app = app
-        self.pid = pid
+        self.pid = os.path.abspath(pid)
         self.action = action
         self.keep_fds = keep_fds or []
         self.privileged_action = privileged_action or (lambda: ())
