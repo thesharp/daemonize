@@ -142,6 +142,7 @@ class Daemonize(object):
             os.dup2(devnull_fd, 0)
             os.dup2(devnull_fd, 1)
             os.dup2(devnull_fd, 2)
+            os.close(devnull_fd)
 
         if self.logger is None:
             # Initialize logging.
