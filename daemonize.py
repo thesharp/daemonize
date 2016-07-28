@@ -243,6 +243,6 @@ class Daemonize(object):
 
         try:
             self.action(*privileged_action_result)
-        except Exception as e:
-            for line in traceback.format_exc(e).split("\n"):
+        except Exception:
+            for line in traceback.format_exc().split("\n"):
                 self.logger.error(line)
