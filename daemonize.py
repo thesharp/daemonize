@@ -60,14 +60,14 @@ class Daemonize(object):
         """
         These actions will be done after SIGTERM.
         """
-        self.logger.warn("Caught signal %s. Stopping daemon." % signum)
+        self.logger.warning("Caught signal %s. Stopping daemon." % signum)
         sys.exit(0)
 
     def exit(self):
         """
         Cleanup pid file at exit.
         """
-        self.logger.warn("Stopping daemon.")
+        self.logger.warning("Stopping daemon.")
         os.remove(self.pid)
         sys.exit(0)
 
@@ -239,7 +239,7 @@ class Daemonize(object):
         signal.signal(signal.SIGTERM, self.sigterm)
         atexit.register(self.exit)
 
-        self.logger.warn("Starting daemon.")
+        self.logger.warning("Starting daemon.")
 
         try:
             self.action(*privileged_action_result)
