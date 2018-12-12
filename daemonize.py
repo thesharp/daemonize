@@ -106,9 +106,12 @@ class Daemonize(object):
                 self.logger.error("Unable to fork, errno: {0}".format(e.errno))
                 sys.exit(1)
             if process_id != 0:
-                # This is the parent process. Exit without cleanup,
-                # see https://github.com/thesharp/daemonize/issues/46
-                os._exit(0)
+                if self.keep_fds:
+                    # This is the parent process. Exit without cleanup,
+                    # see https://github.com/thesharp/daemonize/issues/46
+                    os._exit(0)
+                else:
+                    sys.exit(0)
             # This is the child process. Continue.
 
             # Stop listening for signals that the parent process receives.
