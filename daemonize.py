@@ -13,7 +13,7 @@ from logging import handlers
 import traceback
 
 
-__version__ = "2.4.7"
+__version__ = "2.5.0"
 
 
 class Daemonize(object):
